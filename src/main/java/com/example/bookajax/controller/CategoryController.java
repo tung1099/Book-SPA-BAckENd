@@ -1,5 +1,6 @@
 package com.example.bookajax.controller;
 
+import com.example.bookajax.model.Book;
 import com.example.bookajax.model.Category;
 import com.example.bookajax.service.book.IBookService;
 import com.example.bookajax.service.category.ICategoryService;
@@ -49,5 +50,10 @@ public class CategoryController {
         category.setId(id);
         categoryService.save(category);
         return new ResponseEntity<>(category, HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Category> findById(@PathVariable Long id){
+        Category category = categoryService.findById(id).get();
+        return new ResponseEntity<>(category,HttpStatus.OK);
     }
 }
