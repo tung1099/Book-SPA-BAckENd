@@ -7,6 +7,9 @@ import com.example.bookajax.service.book.IBookService;
 import com.example.bookajax.service.category.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,9 +43,16 @@ public class BookController {
 
 
     @GetMapping
-    public ResponseEntity<Iterable<Book>> showAllBook(){
-        return new ResponseEntity<>(bookService.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<Book>> showList(@RequestParam(name = "q")Optional<String> q, @PageableDefault(value = 3)Pageable pageable) {
+        Page<Book> books;
+        if (!q.isPresent()) {
+            books = bookService.findAll(pageable);
+        } else {
+            books = bookService.findAllByNameContaining(q.get(), pageable);
+        }
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
+
 
     @GetMapping("/cate")
     public ResponseEntity<Iterable<Category>> showAllCategory(){
